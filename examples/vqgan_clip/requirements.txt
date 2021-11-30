@@ -1,0 +1,8 @@
+torch
+cv2
+pytorch_clip_guided_loss
+numpy
+taming-transformers
+huggingface_hub
+kornia
+tqdm

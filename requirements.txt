@@ -1,0 +1,8 @@
+wheel
+omegaconf
+torch
+transformers
+huggingface_hub
+youtokentome
+googletrans
+numpy

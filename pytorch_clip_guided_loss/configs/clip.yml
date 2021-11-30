@@ -1,0 +1,9 @@
+name: openai/clip-vit-base-patch32
+type: clip
+description: CLIP model trained by OpenAI
+model:
+  config: openai/clip-vit-base-patch32
+processor:
+  config: "openai/clip-vit-base-patch32"
+tokenizer:
+  target_lang: en

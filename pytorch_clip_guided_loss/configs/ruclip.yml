@@ -1,0 +1,23 @@
+name: ruclip-vit-base-patch32-v5
+type: ruclip
+description: ruCLIP model trained by Sber
+ckpt:
+  repo_id: sberbank-ai/ru-clip
+  files:
+    - config.json
+    - pytorch_model.bin
+tokenizer:
+  repo_id: sberbank-ai/ru-clip
+  filename: bpe.model
+  target_lang: ru
+  target_length: 76
+image:
+  size: 224
+  mean:
+    - 0.485
+    - 0.456
+    - 0.406
+  std:
+    - 0.229
+    - 0.224
+    - 0.225
