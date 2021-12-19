@@ -14,7 +14,7 @@ import typing
 import torch.nn as nn
 from omegaconf import OmegaConf
 from .utils import res_path
-from .models import CLIPGuidedLoss
+from .clip_guided_loss import CLIPGuidedLoss
 from pytorch_clip import get_clip_model, get_models_list
 
 
