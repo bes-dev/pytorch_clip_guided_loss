@@ -55,7 +55,7 @@ def main(args):
         x = vqvae.embs_to_img(x).add(1).div(2).clamp(0, 1)
         x = x.repeat_interleave(args.batch_size, dim=0)
         x = augs(x)
-        loss = clip_guided_loss(image = x)["loss"]
+        loss = clip_guided_loss.image_loss(image = x)["loss"]
         loss.backward()
         opt.step()
         with torch.inference_mode():

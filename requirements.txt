@@ -6,3 +6,4 @@ huggingface_hub
 youtokentome
 googletrans
 numpy
+pytorch_clip

@@ -17,7 +17,7 @@ from setuptools import setup, find_packages
 
 readme = open('README.md').read()
 
-VERSION = '2021.12.08.0'
+VERSION = '2021.12.19.0'
 
 requirements = [
     'wheel',
@@ -29,7 +29,8 @@ requirements = [
     'huggingface_hub',
     'youtokentome',
     'googletrans',
-    'numpy'
+    'numpy',
+    'pytorch_clip'
 ]
 
 setup(
@@ -57,7 +58,7 @@ setup(
 
     # install .json configs
     package_data={
-        "pytorch_clip_guided_loss": ["configs/*.yml"]
+        # "pytorch_clip_guided_loss": ["configs/*.yml"]
     },
     include_package_data=True
 )

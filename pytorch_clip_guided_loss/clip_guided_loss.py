@@ -15,8 +15,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 # clip model
-from .utils import get_clip_model
-from pytorch_clip_guided_loss.processor.text_processor import TextProcessor
+from pytorch_clip import get_clip_model
+from pytorch_clip.processor.text_processor import TextProcessor
 # utils
 from omegaconf import OmegaConf
 
@@ -129,24 +129,49 @@ class CLIPGuidedLoss(nn.Module):
         if label in self.prompts:
             return self.prompts[label]
 
-    def forward(
-            self,
-            image: typing.Optional[torch.Tensor] = None,
-            text: typing.Optional[typing.Dict[str, torch.Tensor]] = None
-    ) -> torch.Tensor:
+    def forward(self, embed: typing.Optional[torch.Tensor]) -> torch.Tensor:
         """Compute CLIP guided loss between input image/text and all available prompts.
         Arguments:
-            image (torch.Tensor): input image [Optional].
-            text (str): input text [Optional].
+            embed (torch.Tensor): input embedding [Optional].
         Returns:
             loss (torch.Tensor): CLIP guided loss.
         """
-        embed, _ = self._get_embed(image, text)
+        # embed, _ = self._get_embed(image, text)
         loss = {}
         for key, prompt in self.prompts.items():
             loss[key] = prompt(embed)
         loss["loss"] = sum(loss.values()) if len(loss) else 0
         return loss
+
+    def image_loss(self, image: typing.Optional[torch.Tensor]) -> torch.Tensor:
+        """Compute CLIP guided loss between input image and all available prompts.
+        Arguments:
+            image (torch.Tensor): input image.
+        Returns:
+            loss (torch.Tensor): CLIP guided loss.
+        """
+        embed, _ = self._get_embed(image=image)
+        return self(embed)
+
+    def text_loss(self,
+                  input_ids: typing.Optional[torch.Tensor],
+                  embed: typing.Optional[torch.Tensor],
+                  attention_mask: typing.Optional[torch.Tensor] = None
+    ) -> torch.Tensor:
+        """Compute CLIP guided loss between input text and all available prompts.
+        Arguments:
+            input_ids (torch.Tensor): input text tokens indices.
+            embed (torch.Tensor): input text embeddings.
+            attention_mask (torch.Tensor): attention mask [Optional].
+        Returns:
+            loss (torch.Tensor): CLIP guided loss.
+        """
+        embed = self.model.get_text_features(
+            input_ids = input_ids,
+            attention_mask = attention_mask,
+            inputs_embeds = embed
+        )
+        return self(embed)
 
     def _get_embed(
             self,
@@ -175,18 +200,3 @@ class CLIPGuidedLoss(nn.Module):
             src = text
         embed = F.normalize(embed, dim=-1)
         return embed, src
-
-    @classmethod
-    def from_pretrained(cls, cfg: OmegaConf, input_range: typing.Tuple[float, float], cache_dir: str = "/tmp/") -> nn.Module:
-        """Build model from pre-trained checkpoint.
-        Arguments:
-            cfg (OmegaConf): configuration of the model.
-            input_range (tuple[float, float]): input range.
-            cache_dir (str): path to cache dir.
-        Returns:
-            model (nn.Module): CLIPGuidedloss model.
-            text_processor (TextProcessor): text processor.
-            image_processor (nn.Module): image processor.
-        """
-        model, text_processor, image_transforms = get_clip_model(cfg, input_range, cache_dir=cache_dir)
-        return cls(model, text_processor, image_transforms)

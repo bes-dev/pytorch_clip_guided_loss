@@ -15,6 +15,7 @@ import torch.nn as nn
 from omegaconf import OmegaConf
 from .utils import res_path
 from .models import CLIPGuidedLoss
+from pytorch_clip import get_clip_model, get_models_list
 
 
 def get_clip_guided_loss(
@@ -30,6 +31,5 @@ def get_clip_guided_loss(
     Returns:
         model (nn.Module): CLIPGuidedloss model.
     """
-    assert clip_type in ["clip", "ruclip"], f"Unknown clip_type: {clip_type}."
-    cfg = OmegaConf.load(res_path(f"configs/{clip_type}.yml"))
-    return CLIPGuidedLoss.from_pretrained(cfg, input_range, cache_dir)
+    clip, tokenizer, transforms, cfg = get_clip_model(clip_type, input_range, cache_dir)
+    return CLIPGuidedLoss(clip, tokenizer, transforms)
