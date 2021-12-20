@@ -49,7 +49,7 @@ class CLIPPrompt(nn.Module):
         Returns:
             loss (torch.Tensor): output spherical loss.
         """
-        return self.weight * x.sub(self.embed).norm(dim=-1).div(2).arcsin().pow(2).mul(2).mean()
+        return self.weight * x.sub(self.embed).norm(dim=-1).div(2).arcsin().pow(2).mul(2)
 
 
 class CLIPGuidedLoss(nn.Module):
@@ -129,40 +129,46 @@ class CLIPGuidedLoss(nn.Module):
         if label in self.prompts:
             return self.prompts[label]
 
-    def forward(self, embed: typing.Optional[torch.Tensor]) -> torch.Tensor:
+    def forward(self, embed: typing.Optional[torch.Tensor], reduce: str = "mean") -> torch.Tensor:
         """Compute CLIP guided loss between input image/text and all available prompts.
         Arguments:
-            embed (torch.Tensor): input embedding [Optional].
+            embed (torch.Tensor): input embedding.
+            reduce (str): reduce mode ("mean", "sum" or None)
         Returns:
             loss (torch.Tensor): CLIP guided loss.
         """
-        # embed, _ = self._get_embed(image, text)
+        assert reduce in ["mean", "sum", None]
         loss = {}
         for key, prompt in self.prompts.items():
             loss[key] = prompt(embed)
+            if reduce is not None:
+                loss[key] = loss[key].mean() if reduce == "mean" else loss[key].sum()
         loss["loss"] = sum(loss.values()) if len(loss) else 0
         return loss
 
-    def image_loss(self, image: typing.Optional[torch.Tensor]) -> torch.Tensor:
+    def image_loss(self, image: typing.Optional[torch.Tensor], reduce: str="mean") -> torch.Tensor:
         """Compute CLIP guided loss between input image and all available prompts.
         Arguments:
             image (torch.Tensor): input image.
+            reduce (str): reduce mode ("mean", "sum" or None)
         Returns:
             loss (torch.Tensor): CLIP guided loss.
         """
         embed, _ = self._get_embed(image=image)
-        return self(embed)
+        return self(embed, reduce=reduce)
 
     def text_loss(self,
                   input_ids: typing.Optional[torch.Tensor],
                   embed: typing.Optional[torch.Tensor],
-                  attention_mask: typing.Optional[torch.Tensor] = None
+                  attention_mask: typing.Optional[torch.Tensor] = None,
+                  reduce: str = "mean"
     ) -> torch.Tensor:
         """Compute CLIP guided loss between input text and all available prompts.
         Arguments:
             input_ids (torch.Tensor): input text tokens indices.
             embed (torch.Tensor): input text embeddings.
             attention_mask (torch.Tensor): attention mask [Optional].
+            reduce (str): reduce mode ("mean", "sum" or None)
         Returns:
             loss (torch.Tensor): CLIP guided loss.
         """
@@ -171,7 +177,7 @@ class CLIPGuidedLoss(nn.Module):
             attention_mask = attention_mask,
             inputs_embeds = embed
         )
-        return self(embed)
+        return self(embed, reduce=reduce)
 
     def _get_embed(
             self,
