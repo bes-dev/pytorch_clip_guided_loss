@@ -1,0 +1,6 @@
+torch
+cv2
+pytorch_clip
+pytorch_clip_guided_loss
+numpy
+tqdm
