@@ -6,6 +6,11 @@ A simple library that implements CLIP guided loss in PyTorch.
   <img src="resources/preview.png"/>
 </p>
 
+[![Downloads](https://pepy.tech/badge/pytorch_clip_guided_loss)](https://pepy.tech/project/pytorch_clip_guided_loss)
+[![Downloads](https://pepy.tech/badge/pytorch_clip_guided_loss/month)](https://pepy.tech/project/pytorch_clip_guided_loss)
+[![Downloads](https://pepy.tech/badge/pytorch_clip_guided_loss/week)](https://pepy.tech/project/pytorch_clip_guided_loss)
+
+
 ## Install package
 
 ```bash
