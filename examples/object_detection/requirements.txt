@@ -1,0 +1,5 @@
+torch
+cv2
+pytorch_clip_guided_loss
+numpy
+selectivesearch

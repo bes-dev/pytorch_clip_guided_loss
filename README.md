@@ -53,3 +53,8 @@ print(var.grad)
 
 We provide our tiny implementation of the VQGAN-CLIP pipeline for image generation as an example of the usage of our library.
 To start using our implementation of the VQGAN-CLIP please follow by [documentation](examples/vqgan_clip).
+
+### Zero-shot Object Detection
+
+We provide our tiny implementation of the object detector based on Selective Search region proposals and CLIP guided loss.
+To start using our implementation of the ClipRCNN please follow by [documentation](examples/object_detection).
