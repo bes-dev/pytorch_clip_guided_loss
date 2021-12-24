@@ -7,6 +7,13 @@
 Tiny implementation of the object detector based on Selective Search region proposals and CLIP guided loss.
 Our detector supports both text and image user's prompts.
 
+## Notice
+
+This is just toy implementation of the text-driven object detection pipeline.
+If you want to use text-driven bounding box filtering in your own object-detection pipeline,
+please refer to our library [pytorch_clip_bbox](https://github.com/bes-dev/pytorch_clip_bbox).
+pytorch clip bbox is powerful tool to integrate text driven approach to any object-detection pipelines.
+
 ## Usage
 
 ### Install requirements

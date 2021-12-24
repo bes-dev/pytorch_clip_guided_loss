@@ -44,7 +44,7 @@ loss_fn.add_prompt(image=torch.randn(1, 3, 224, 224))
 
 # variable
 var = torch.randn(1, 3, 224, 224).requires_grad_(True)
-loss = loss_fn(image=var)["loss"]
+loss = loss_fn.image_loss(image=var)["loss"]
 loss.backward()
 print(var.grad)
 ```
