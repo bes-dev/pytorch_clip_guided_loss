@@ -198,11 +198,13 @@ class CLIPGuidedLoss(nn.Module):
             src = image
         else:
             if isinstance(text, str):
-                text = self.text_processor.encode(text, return_mask=True)
-                text["input_ids"] = text["input_ids"].view(1, -1).to(self.device_info.device)
-                if "attention_mask" in text:
-                    text["attention_mask"] = text["attention_mask"].view(1, -1).to(self.device_info.device)
-            embed = self.model.get_text_features(**text)
+                batch = self.text_processor.encode(text, return_mask=True)
+                batch["input_ids"] = batch["input_ids"].view(1, -1).to(self.device_info.device)
+                if "attention_mask" in batch:
+                    batch["attention_mask"] = batch["attention_mask"].view(1, -1).to(self.device_info.device)
+                else:
+                    batch = text
+            embed = self.model.get_text_features(**batch)
             src = text
         embed = F.normalize(embed, dim=-1)
         return embed, src
